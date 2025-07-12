@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanh toán thành công</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>✅ Thanh toán thành công!</h1>
+    <p>Cảm ơn bạn đã mua gói nâng cấp ảnh.</p>
+    <button onclick="window.location.href='/'">Quay lại trang chủ</button>
+  </div>
+  <script>
+    console.log('🎉 User đã hoàn thành thanh toán thành công!')
+    console.log('💳 Stripe đã xử lý thanh toán và chuyển hướng về success page')
+    
+    // Lấy URL parameters nếu Stripe truyền thêm thông tin
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('session_id')) {
+      console.log('🔑 Session ID từ Stripe:', urlParams.get('session_id'))
+    }
+  </script>
+</body>
+</html>

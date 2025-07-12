@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanh toán test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Mua gói không watermark - $10</h1>
+    <button id="checkout">Thanh toán ngay</button>
+  </div>
+  <script>
+    console.log('🎨 Frontend đã load thành công!')
+    console.log('🔧 Đang thiết lập event listener cho nút thanh toán...')
+    
+    document.getElementById('checkout').addEventListener('click', async () => {
+      console.log('🛒 User đã click nút "Thanh toán ngay"')
+      console.log('📡 Đang gửi request tạo checkout session...')
+      
+      try {
+        const res = await fetch('/create-checkout-session', { method: 'POST' });
+        
+        console.log('📨 Response status:', res.status)
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        
+        const data = await res.json();
+        console.log('✅ Nhận được checkout URL từ server:', data.url)
+        console.log('🔄 Đang chuyển hướng đến Stripe checkout...')
+        
+        window.location = data.url;
+      } catch (error) {
+        console.error('❌ Lỗi khi tạo checkout session:', error)
+        alert('Có lỗi xảy ra khi tạo session thanh toán. Vui lòng thử lại!')
+      }
+    });
+    
+    console.log('✅ Event listener đã được thiết lập thành công!')
+  </script>
+</body>
+</html>

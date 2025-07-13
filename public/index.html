@@ -5,41 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thanh toán test</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://js.stripe.com/v3/"></script> <!-- Stripe SDK -->
 </head>
 <body>
   <div class="container">
     <h1>Mua gói không watermark - $10</h1>
     <button id="checkout">Thanh toán ngay</button>
+    <p id="loading" style="display: none;">🔄 Đang chuyển hướng đến Stripe...</p>
+    <p id="error" style="color: red;"></p>
   </div>
+
   <script>
-    console.log('🎨 Frontend đã load thành công!')
-    console.log('🔧 Đang thiết lập event listener cho nút thanh toán...')
-    
+    const stripe = Stripe('pk_test_51RjMX5IByQjRJPBmaGCJ054XReY9jbWQ36YNwAd8eZdMk2nNIhfjGIIa1DTxps2NVAksjG5DZpwcx19gkkns30uQ00VkCQm4OV'); // 🟢 Thay bằng public key thật của bạn
+
     document.getElementById('checkout').addEventListener('click', async () => {
-      console.log('🛒 User đã click nút "Thanh toán ngay"')
-      console.log('📡 Đang gửi request tạo checkout session...')
-      
+      const button = document.getElementById('checkout');
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+
+      button.disabled = true;
+      loading.style.display = 'block';
+      error.textContent = '';
+
       try {
         const res = await fetch('/create-checkout-session', { method: 'POST' });
-        
-        console.log('📨 Response status:', res.status)
-        
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`)
-        }
-        
         const data = await res.json();
-        console.log('✅ Nhận được checkout URL từ server:', data.url)
-        console.log('🔄 Đang chuyển hướng đến Stripe checkout...')
-        
-        window.location = data.url;
-      } catch (error) {
-        console.error('❌ Lỗi khi tạo checkout session:', error)
-        alert('Có lỗi xảy ra khi tạo session thanh toán. Vui lòng thử lại!')
+
+        const result = await stripe.redirectToCheckout({
+          sessionId: data.id
+        });
+
+        if (result.error) {
+          error.textContent = result.error.message;
+          console.error(result.error);
+        }
+      } catch (err) {
+        error.textContent = 'Đã xảy ra lỗi khi tạo phiên thanh toán.';
+        console.error(err);
+      } finally {
+        button.disabled = false;
+        loading.style.display = 'none';
       }
     });
-    
-    console.log('✅ Event listener đã được thiết lập thành công!')
   </script>
 </body>
 </html>

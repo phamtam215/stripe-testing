@@ -28,8 +28,10 @@
       error.textContent = '';
 
       try {
-        const res = await fetch('/create-checkout-session', { method: 'POST' });
+        const res = await fetch('/create-subscription-session', { method: 'POST' });
         const data = await res.json();
+
+        console.log('Session data:', data);
 
         const result = await stripe.redirectToCheckout({
           sessionId: data.id
